@@ -1,0 +1,36 @@
+{
+    "variables": {
+      "source_image": "centos-7-v20210512",
+      "version": "snapshot",
+      "branch": "develop",
+      "gcp_project": "its-artifact-commons"
+    },
+
+    "builders": [
+      {
+        "type": "googlecompute",
+        "project_id": "{{user `gcp_project`}}",
+        "source_image": "{{user `source_image`}}",
+        "ssh_username": "packer",
+        "zone": "asia-southeast1-b",
+        "image_name": "basic-{{user `source_image`}}-{{user `branch`}}-{{user `version`}}",
+        "image_description": "Based on {{user `source_image`}}, branch {{user `branch`}}"
+      }
+    ],
+
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [        
+          "sleep 30",
+          "echo 'IMAGE_VERSION={{user `source_image`}}-{{user `branch`}}-{{user `version`}}'",
+          "sudo yum update -y"
+        ]
+      },
+
+      {
+        "type": "shell",
+        "script": "setup.bash"
+      }      
+    ]   
+  }
